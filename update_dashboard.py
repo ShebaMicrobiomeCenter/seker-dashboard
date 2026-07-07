@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # הגדרות ה-API של GitLab
 PROJECT_ID = "84191474"
@@ -23,9 +24,13 @@ try:
     # מספר המשתתפים הייחודיים שתרמו לפחות דגימה אחת
     # (בהנחה שקיימת קורלציה בקובץ הדגימות דרך עמודה בשם ParticipantID או קשר דומה)
     # הערה: אם שם העמודה המקשרת בקובץ הדגימות שונה מ-'ParticipantID', החלף אותו כאן
-    unique_sample_donors = samples_df['ParticipantID'].dropna().nunique()
+    if 'ParticipantID' in samples_df.columns:
+        unique_sample_donors = samples_df['ParticipantID'].dropna().nunique()
+    else:
+        # Fallback if ParticipantID is missing in samples.csv
+        unique_sample_donors = samples_df['SampleID'].dropna().nunique()
     
-    current_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    current_time = datetime.now(ZoneInfo('Asia/Jerusalem')).strftime("%d/%m/%Y %H:%M:%S")
 
     # 3. יצירת דף דשבורד מעוצב ב-HTML (עם 3 כרטיסים)
     html_content = f"""
@@ -65,7 +70,7 @@ try:
                     <div class="number">{total_samples}</div>
                 </div>
             </div>
-            <div class="footer">עודכן לאחרונה באופן אוטומטי ב- {current_time} (שעון שרת)</div>
+            <div class="footer">עודכן לאחרונה באופן אוטומטי ב- {current_time} (שעון ישראל)</div>
         </div>
     </body>
     </html>
