@@ -1,32 +1,54 @@
 import os
+import json
 import pandas as pd
 from datetime import datetime
-from zoneinfo import ZoneInfo  # ספרייה מובנית לניהול אזורי זמן
+from zoneinfo import ZoneInfo
 
-# הגדרות ה-API של GitLab
 PROJECT_ID = "84191474"
 PARTICIPANTS_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/participants.csv/raw?ref=main"
 SAMPLES_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/samples.csv/raw?ref=main"
+STATS_FILE = "pipeline_stats.json"
 
 try:
-    print("Fetching data from GitLab...")
+    # א. משיכת נתונים עדכניים מ-GitLab (רץ תמיד כדי לשמור על סנכרון גיוס)
+    print("Fetching recruitment data from GitLab...")
     participants_df = pd.read_csv(PARTICIPANTS_URL)
     samples_df = pd.read_csv(SAMPLES_URL)
 
-    # חישוב נתוני רישום ואיסוף
     total_participants = participants_df['ParticipantID'].dropna().nunique()
     total_samples = samples_df['SampleID'].dropna().count()
     unique_sample_donors = samples_df['ParticipantID'].dropna().nunique()
     
-    # שליפת המטריקות האנונימיות מתוך משתני הסביבה (שהגיעו מהריפו הפרטי)
-    megamap_total = os.getenv('MEGAMAP_TOTAL', 'N/A')
-    megamap_success = os.getenv('MEGAMAP_SUCCESS', 'N/A')
-    megamap_failed = os.getenv('MEGAMAP_FAILED', 'N/A')
-    
-    # הגדרת הזמן הנוכחי לפי שעון ישראל (Asia/Jerusalem) ומעבר אוטומטי בין שעון קיץ לחורף
+    # ב. ניהול הזיכרון של נתוני ה-MegaMap מהריפו הפרטי
+    # טעינת קובץ הסטטיסטיקות השמור (אם קיים)
+    if os.path.exists(STATS_FILE):
+        with open(STATS_FILE, "r") as f:
+            saved_stats = json.load(f)
+    else:
+        # ערכי ברירת מחדל ראשוניים אם הקובץ עדיין לא נוצר מעולם
+        saved_stats = {"total": "0", "success": "0", "failed": "0"}
+
+    # קריאת משתני הסביבה (יהיו מלאים רק אם הריפו הפרטי ביצע Trigger)
+    megamap_total = os.getenv('MEGAMAP_TOTAL')
+    megamap_success = os.getenv('MEGAMAP_SUCCESS')
+    megamap_failed = os.getenv('MEGAMAP_FAILED')
+
+    # עדכון קובץ ה-JSON רק אם קיבלנו מידע חדש ואמיתי מהריפו הפרטי
+    if megamap_total and megamap_total.strip() != "":
+        print(f"New MegaMap telemetry received: Total={megamap_total}")
+        saved_stats["total"] = megamap_total
+        saved_stats["success"] = megamap_success
+        saved_stats["failed"] = megamap_failed
+        
+        # שמירת המצב החדש לתוך הקובץ שיעלה לגיט
+        with open(STATS_FILE, "w") as f:
+            json.dump(saved_stats, f)
+    else:
+        print("No new MegaMap telemetry in this run. Using cached statistics.")
+
+    # ג. הפקת ה-HTML העדכני
     current_time = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M:%S")
 
-    # יצירת דף דשבורד מעוצב עם חלוקה לשני מקורות מידע
     html_content = f"""
     <!DOCTYPE html>
     <html lang="he" dir="rtl">
@@ -77,15 +99,15 @@ try:
             <div class="grid">
                 <div class="card pipeline">
                     <div class="label">דגימות שזרמו ל-Pipeline</div>
-                    <div class="number">{megamap_total}</div>
+                    <div class="number">{saved_stats["total"]}</div>
                 </div>
                 <div class="card success">
                     <div class="label">הסתיימו בהצלחה (>4K reads)</div>
-                    <div class="number">{megamap_success}</div>
+                    <div class="number">{saved_stats["success"]}</div>
                 </div>
                 <div class="card failed">
                     <div class="label">נכשלו / לא עברו סף</div>
-                    <div class="number">{megamap_failed}</div>
+                    <div class="number">{saved_stats["failed"]}</div>
                 </div>
             </div>
             
@@ -98,9 +120,8 @@ try:
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
         
-    print("Dashboard HTML updated successfully with full metrics and Israel time!")
+    print("Dashboard HTML updated successfully using decoupled state logic!")
 
 except Exception as e:
     print(f"Error generating dashboard: {e}")
     exit(1)
-    
