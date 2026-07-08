@@ -69,7 +69,8 @@
             .stage-4 { clip-path: polygon(24% 0%, 76% 0%, 68% 100%, 32% 100%); }
 
             .stage-label { font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }
-            .stage-value { font-size: 2.2rem; font-weight: 800; }
+            .stage-value { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+            .update-date { font-size: 0.75rem; opacity: 0.7; margin-top: 4px; font-weight: 400; }
 
             .en-text { direction: ltr; display: inline-block; }
 
@@ -124,8 +125,9 @@
                 transition: transform 0.2s;
             }
             .stat-card:hover { transform: translateY(-5px); }
-            .stat-card .val { font-size: 1.8rem; font-weight: 800; color: var(--sheba-blue); display: block; }
-            .stat-card .lab { font-size: 1rem; color: var(--text-gray); font-weight: 500; }
+            .stat-card .val { font-size: 1.8rem; font-weight: 800; color: var(--sheba-blue); display: block; line-height: 1.2; }
+            .stat-card .lab { font-size: 1rem; color: var(--text-gray); font-weight: 500; display: block; }
+            .stat-card .update-date { color: var(--text-gray); opacity: 0.6; }
 
             .footer {
                 margin-top: 60px;
@@ -162,6 +164,7 @@
                 <div class="stage-wrapper">
                     <div class="stage stage-1">
                         <div class="stage-label">משתתפים רשומים בסקר</div>
+                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
                         <div class="stage-value">1723</div>
                     </div>
                     <div class="pct-badge">בסיס (100%)</div>
@@ -170,6 +173,7 @@
                 <div class="stage-wrapper">
                     <div class="stage stage-2" title="חסרים 340 משתתפים: בעיקר כאלה שפרשו מהמחקר">
                         <div class="stage-label">משתתפים שתרמו דגימה</div>
+                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
                         <div class="stage-value">1383</div>
                     </div>
                     <div class="pct-badge">80.3% משלב קודם</div>
@@ -178,6 +182,7 @@
                 <div class="stage-wrapper">
                     <div class="stage stage-3" title="חסרות 147 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
                         <div class="stage-label">דוגמאות שעברו ריצוף</div>
+                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
                         <div class="stage-value">1236</div>
                     </div>
                     <div class="pct-badge">89.4% משלב קודם</div>
@@ -186,6 +191,7 @@
                 <div class="stage-wrapper">
                     <div class="stage stage-4" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
                         <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
+                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
                         <div class="stage-value">1210</div>
                     </div>
                     <div class="pct-badge">97.9% משלב קודם</div>
@@ -198,16 +204,18 @@
                     <div class="stat-card">
                         <span class="val">5478</span>
                         <span class="lab">סך כל הדגימות במקפיא</span>
+                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
                     </div>
                     <div class="stat-card">
                         <span class="val">26</span>
                         <span class="lab">נכשלו / לא עברו סף</span>
+                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
                     </div>
                 </div>
             </div>
             
             <div class="footer">
-                עודכן לאחרונה באופן אוטומטי ב- 08/07/2026 22:08:27 (שעון ישראל)
+                עודכן לאחרונה באופן אוטומטי ב- 08/07/2026 22:56:31 (שעון ישראל)
             </div>
         </div>
     </body>

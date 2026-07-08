@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -8,6 +9,22 @@ PROJECT_ID = "84191474"
 PARTICIPANTS_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/participants.csv/raw?ref=main"
 SAMPLES_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/samples.csv/raw?ref=main"
 STATS_FILE = "pipeline_stats.json"
+
+def get_last_commit_date(file_path):
+    try:
+        url = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/commits"
+        params = {"path": file_path, "ref_name": "main", "per_page": 1}
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        commits = response.json()
+        if commits:
+            commit_date_str = commits[0]["committed_date"]
+            # Example: 2026-07-07T14:26:17.000+00:00
+            dt = datetime.fromisoformat(commit_date_str.replace("Z", "+00:00"))
+            return dt.astimezone(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
+    except Exception as e:
+        print(f"Error fetching commit date for {file_path}: {e}")
+    return "N/A"
 
 def calculate_percentage(current, previous):
     try:
@@ -25,6 +42,9 @@ try:
     participants_df = pd.read_csv(PARTICIPANTS_URL)
     samples_df = pd.read_csv(SAMPLES_URL)
 
+    participants_update_date = get_last_commit_date("participants.csv")
+    samples_update_date = get_last_commit_date("samples.csv")
+
     total_participants = participants_df['ParticipantID'].dropna().nunique()
     unique_sample_donors = samples_df['SampleID'].dropna().nunique()
     total_samples = samples_df['SampleID'].dropna().count()
@@ -34,7 +54,7 @@ try:
         with open(STATS_FILE, "r") as f:
             saved_stats = json.load(f)
     else:
-        saved_stats = {"total": "0", "success": "0", "failed": "0"}
+        saved_stats = {"total": "0", "success": "0", "failed": "0", "last_updated": "N/A"}
 
     megamap_total = os.getenv('MEGAMAP_TOTAL')
     megamap_success = os.getenv('MEGAMAP_SUCCESS')
@@ -44,8 +64,11 @@ try:
         saved_stats["total"] = megamap_total
         saved_stats["success"] = megamap_success
         saved_stats["failed"] = megamap_failed
+        saved_stats["last_updated"] = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
         with open(STATS_FILE, "w") as f:
             json.dump(saved_stats, f)
+
+    sequencing_update_date = saved_stats.get("last_updated", "N/A")
 
     # חישוב אחוזים ופערים
     pct_donors = calculate_percentage(unique_sample_donors, total_participants)
@@ -134,7 +157,8 @@ try:
             .stage-4 {{ clip-path: polygon(24% 0%, 76% 0%, 68% 100%, 32% 100%); }}
 
             .stage-label {{ font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }}
-            .stage-value {{ font-size: 2.2rem; font-weight: 800; }}
+            .stage-value {{ font-size: 2.2rem; font-weight: 800; line-height: 1; }}
+            .update-date {{ font-size: 0.75rem; opacity: 0.7; margin-top: 4px; font-weight: 400; }}
 
             .en-text {{ direction: ltr; display: inline-block; }}
 
@@ -189,8 +213,9 @@ try:
                 transition: transform 0.2s;
             }}
             .stat-card:hover {{ transform: translateY(-5px); }}
-            .stat-card .val {{ font-size: 1.8rem; font-weight: 800; color: var(--sheba-blue); display: block; }}
-            .stat-card .lab {{ font-size: 1rem; color: var(--text-gray); font-weight: 500; }}
+            .stat-card .val {{ font-size: 1.8rem; font-weight: 800; color: var(--sheba-blue); display: block; line-height: 1.2; }}
+            .stat-card .lab {{ font-size: 1rem; color: var(--text-gray); font-weight: 500; display: block; }}
+            .stat-card .update-date {{ color: var(--text-gray); opacity: 0.6; }}
 
             .footer {{
                 margin-top: 60px;
@@ -227,6 +252,7 @@ try:
                 <div class="stage-wrapper">
                     <div class="stage stage-1">
                         <div class="stage-label">משתתפים רשומים בסקר</div>
+                        <div class="update-date">עודכן: {participants_update_date}</div>
                         <div class="stage-value">{total_participants}</div>
                     </div>
                     <div class="pct-badge">בסיס (100%)</div>
@@ -235,6 +261,7 @@ try:
                 <div class="stage-wrapper">
                     <div class="stage stage-2" title="{tooltip_2}">
                         <div class="stage-label">משתתפים שתרמו דגימה</div>
+                        <div class="update-date">עודכן: {samples_update_date}</div>
                         <div class="stage-value">{unique_sample_donors}</div>
                     </div>
                     <div class="pct-badge">{pct_donors}% משלב קודם</div>
@@ -243,6 +270,7 @@ try:
                 <div class="stage-wrapper">
                     <div class="stage stage-3" title="{tooltip_3}">
                         <div class="stage-label">דוגמאות שעברו ריצוף</div>
+                        <div class="update-date">עודכן: {sequencing_update_date}</div>
                         <div class="stage-value">{saved_stats["total"]}</div>
                     </div>
                     <div class="pct-badge">{pct_pipeline}% משלב קודם</div>
@@ -251,6 +279,7 @@ try:
                 <div class="stage-wrapper">
                     <div class="stage stage-4" title="{tooltip_4}">
                         <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
+                        <div class="update-date">עודכן: {sequencing_update_date}</div>
                         <div class="stage-value">{saved_stats["success"]}</div>
                     </div>
                     <div class="pct-badge">{pct_success}% משלב קודם</div>
@@ -263,10 +292,12 @@ try:
                     <div class="stat-card">
                         <span class="val">{total_samples}</span>
                         <span class="lab">סך כל הדגימות במקפיא</span>
+                        <div class="update-date">עודכן: {samples_update_date}</div>
                     </div>
                     <div class="stat-card">
                         <span class="val">{saved_stats["failed"]}</span>
                         <span class="lab">נכשלו / לא עברו סף</span>
+                        <div class="update-date">עודכן: {sequencing_update_date}</div>
                     </div>
                 </div>
             </div>
