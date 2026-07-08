@@ -242,7 +242,7 @@ try:
 
                 <div class="stage-wrapper">
                     <div class="stage stage-3" title="{tooltip_3}">
-                        <div class="stage-label">דגימות שזרמו ל-Pipeline</div>
+                        <div class="stage-label">דוגמאות שעברו ריצוף</div>
                         <div class="stage-value">{saved_stats["total"]}</div>
                     </div>
                     <div class="pct-badge">{pct_pipeline}% משלב קודם</div>
