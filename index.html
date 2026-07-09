@@ -63,10 +63,11 @@
             }
 
             /* Funnel shapes using clip-path */
-            .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%); }
-            .stage-2 { clip-path: polygon(8% 0%, 92% 0%, 84% 100%, 16% 100%); }
-            .stage-3 { clip-path: polygon(16% 0%, 84% 0%, 76% 100%, 24% 100%); }
-            .stage-4 { clip-path: polygon(24% 0%, 76% 0%, 68% 100%, 32% 100%); }
+            .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 93% 100%, 7% 100%); }
+            .stage-2 { clip-path: polygon(7% 0%, 93% 0%, 86% 100%, 14% 100%); }
+            .stage-3 { clip-path: polygon(14% 0%, 86% 0%, 79% 100%, 21% 100%); }
+            .stage-4 { clip-path: polygon(21% 0%, 79% 0%, 72% 100%, 28% 100%); }
+            .stage-5 { clip-path: polygon(28% 0%, 72% 0%, 65% 100%, 35% 100%); }
 
             .stage-label { font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }
             .stage-value { font-size: 2.2rem; font-weight: 800; line-height: 1; }
@@ -114,7 +115,7 @@
             }
             .grid {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
             }
             .stat-card {
@@ -146,10 +147,11 @@
                 .grid { grid-template-columns: 1fr; }
 
                 /* Adjust shapes for mobile to avoid text cutting */
-                .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 96% 100%, 4% 100%); }
-                .stage-2 { clip-path: polygon(4% 0%, 96% 0%, 92% 100%, 8% 100%); }
-                .stage-3 { clip-path: polygon(8% 0%, 92% 0%, 88% 100%, 12% 100%); }
-                .stage-4 { clip-path: polygon(12% 0%, 88% 0%, 84% 100%, 16% 100%); }
+                .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%); }
+                .stage-2 { clip-path: polygon(3% 0%, 97% 0%, 94% 100%, 6% 100%); }
+                .stage-3 { clip-path: polygon(6% 0%, 94% 0%, 91% 100%, 9% 100%); }
+                .stage-4 { clip-path: polygon(9% 0%, 91% 0%, 88% 100%, 12% 100%); }
+                .stage-5 { clip-path: polygon(12% 0%, 88% 0%, 85% 100%, 15% 100%); }
             }
         </style>
     </head>
@@ -164,32 +166,41 @@
                 <div class="stage-wrapper">
                     <div class="stage stage-1">
                         <div class="stage-label">משתתפים רשומים בסקר</div>
-                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
-                        <div class="stage-value">1723</div>
+                        <div class="update-date">עודכן: 09/07/2026 09:55</div>
+                        <div class="stage-value">1732</div>
                     </div>
                     <div class="pct-badge">בסיס (100%)</div>
                 </div>
 
                 <div class="stage-wrapper">
-                    <div class="stage stage-2" title="חסרים 340 משתתפים: בעיקר כאלה שפרשו מהמחקר">
-                        <div class="stage-label">משתתפים שתרמו דגימה</div>
-                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
-                        <div class="stage-value">1383</div>
+                    <div class="stage stage-2" title="110 משתתפים שפרשו">
+                        <div class="stage-label">משתתפים שלא פרשו</div>
+                        <div class="update-date">עודכן: 09/07/2026 09:55</div>
+                        <div class="stage-value">1622</div>
                     </div>
-                    <div class="pct-badge">80.3% משלב קודם</div>
+                    <div class="pct-badge">93.6% משלב קודם</div>
                 </div>
 
                 <div class="stage-wrapper">
-                    <div class="stage stage-3" title="חסרות 147 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
+                    <div class="stage stage-3" title="235 משתתפים שדגימה שלהם לא נקלטה במערכת">
+                        <div class="stage-label">משתתפים שתרמו דגימה</div>
+                        <div class="update-date">עודכן: 09/07/2026 00:00</div>
+                        <div class="stage-value">1387</div>
+                    </div>
+                    <div class="pct-badge">85.5% משלב קודם</div>
+                </div>
+
+                <div class="stage-wrapper">
+                    <div class="stage stage-4" title="חסרות 151 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
                         <div class="stage-label">דוגמאות שעברו ריצוף</div>
                         <div class="update-date">עודכן: 08/07/2026 22:56</div>
                         <div class="stage-value">1236</div>
                     </div>
-                    <div class="pct-badge">89.4% משלב קודם</div>
+                    <div class="pct-badge">89.1% משלב קודם</div>
                 </div>
 
                 <div class="stage-wrapper">
-                    <div class="stage stage-4" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
+                    <div class="stage stage-5" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
                         <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
                         <div class="update-date">עודכן: 08/07/2026 22:56</div>
                         <div class="stage-value">1210</div>
@@ -202,20 +213,25 @@
                 <div class="sup-header">נתונים משלימים</div>
                 <div class="grid">
                     <div class="stat-card">
-                        <span class="val">5478</span>
+                        <span class="val">5494</span>
                         <span class="lab">סך כל הדגימות במקפיא</span>
-                        <div class="update-date">עודכן: 07/07/2026 17:26</div>
+                        <div class="update-date">עודכן: 09/07/2026 00:00</div>
                     </div>
                     <div class="stat-card">
                         <span class="val">26</span>
                         <span class="lab">נכשלו / לא עברו סף</span>
                         <div class="update-date">עודכן: 08/07/2026 22:56</div>
                     </div>
+                    <div class="stat-card">
+                        <span class="val">110</span>
+                        <span class="lab">משתתפים שפרשו מהמחקר</span>
+                        <div class="update-date">עודכן: 09/07/2026 09:55</div>
+                    </div>
                 </div>
             </div>
             
             <div class="footer">
-                עודכן לאחרונה באופן אוטומטי ב- 08/07/2026 22:56:31 (שעון ישראל)
+                עודכן לאחרונה באופן אוטומטי ב- 09/07/2026 10:28:01 (שעון ישראל)
             </div>
         </div>
     </body>

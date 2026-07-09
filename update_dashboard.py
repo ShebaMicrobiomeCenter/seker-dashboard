@@ -46,6 +46,11 @@ try:
     samples_update_date = get_last_commit_date("samples.csv")
 
     total_participants = participants_df['ParticipantID'].dropna().nunique()
+
+    # Calculate withdrawn participants (Status == 'פרש')
+    withdrawn_participants = participants_df[participants_df['Status'] == 'פרש']['ParticipantID'].dropna().nunique()
+    active_participants = total_participants - withdrawn_participants
+
     unique_sample_donors = samples_df['SampleID'].dropna().nunique()
     total_samples = samples_df['SampleID'].dropna().count()
     
@@ -71,18 +76,20 @@ try:
     sequencing_update_date = saved_stats.get("last_updated", "N/A")
 
     # חישוב אחוזים ופערים
-    pct_donors = calculate_percentage(unique_sample_donors, total_participants)
+    pct_active = calculate_percentage(active_participants, total_participants)
+    pct_donors = calculate_percentage(unique_sample_donors, active_participants)
     pct_pipeline = calculate_percentage(saved_stats["total"], unique_sample_donors)
     pct_success = calculate_percentage(saved_stats["success"], saved_stats["total"])
 
     # חישוב פערים לטולטיפים
-    gap_2_1 = max(0, total_participants - unique_sample_donors)
-    gap_3_2 = max(0, unique_sample_donors - int(saved_stats["total"]))
-    gap_4_3 = max(0, int(saved_stats["total"]) - int(saved_stats["success"]))
+    gap_3_2 = max(0, active_participants - unique_sample_donors)
+    gap_4_3 = max(0, unique_sample_donors - int(saved_stats["total"]))
+    gap_5_4 = max(0, int(saved_stats["total"]) - int(saved_stats["success"]))
 
-    tooltip_2 = f"חסרים {gap_2_1} משתתפים: בעיקר כאלה שפרשו מהמחקר"
-    tooltip_3 = f"חסרות {gap_3_2} דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה"
-    tooltip_4 = f"חסרות {gap_4_3} דגימות: רובן לא הגיעו לסף הקריאות הנדרש"
+    tooltip_2 = f"{withdrawn_participants} משתתפים שפרשו"
+    tooltip_3 = f"{gap_3_2} משתתפים שדגימה שלהם לא נקלטה במערכת"
+    tooltip_4 = f"חסרות {gap_4_3} דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה"
+    tooltip_5 = f"חסרות {gap_5_4} דגימות: רובן לא הגיעו לסף הקריאות הנדרש"
 
     current_time = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M:%S")
 
@@ -151,10 +158,11 @@ try:
             }}
 
             /* Funnel shapes using clip-path */
-            .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%); }}
-            .stage-2 {{ clip-path: polygon(8% 0%, 92% 0%, 84% 100%, 16% 100%); }}
-            .stage-3 {{ clip-path: polygon(16% 0%, 84% 0%, 76% 100%, 24% 100%); }}
-            .stage-4 {{ clip-path: polygon(24% 0%, 76% 0%, 68% 100%, 32% 100%); }}
+            .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 93% 100%, 7% 100%); }}
+            .stage-2 {{ clip-path: polygon(7% 0%, 93% 0%, 86% 100%, 14% 100%); }}
+            .stage-3 {{ clip-path: polygon(14% 0%, 86% 0%, 79% 100%, 21% 100%); }}
+            .stage-4 {{ clip-path: polygon(21% 0%, 79% 0%, 72% 100%, 28% 100%); }}
+            .stage-5 {{ clip-path: polygon(28% 0%, 72% 0%, 65% 100%, 35% 100%); }}
 
             .stage-label {{ font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }}
             .stage-value {{ font-size: 2.2rem; font-weight: 800; line-height: 1; }}
@@ -202,7 +210,7 @@ try:
             }}
             .grid {{
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
             }}
             .stat-card {{
@@ -234,10 +242,11 @@ try:
                 .grid {{ grid-template-columns: 1fr; }}
 
                 /* Adjust shapes for mobile to avoid text cutting */
-                .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 96% 100%, 4% 100%); }}
-                .stage-2 {{ clip-path: polygon(4% 0%, 96% 0%, 92% 100%, 8% 100%); }}
-                .stage-3 {{ clip-path: polygon(8% 0%, 92% 0%, 88% 100%, 12% 100%); }}
-                .stage-4 {{ clip-path: polygon(12% 0%, 88% 0%, 84% 100%, 16% 100%); }}
+                .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%); }}
+                .stage-2 {{ clip-path: polygon(3% 0%, 97% 0%, 94% 100%, 6% 100%); }}
+                .stage-3 {{ clip-path: polygon(6% 0%, 94% 0%, 91% 100%, 9% 100%); }}
+                .stage-4 {{ clip-path: polygon(9% 0%, 91% 0%, 88% 100%, 12% 100%); }}
+                .stage-5 {{ clip-path: polygon(12% 0%, 88% 0%, 85% 100%, 15% 100%); }}
             }}
         </style>
     </head>
@@ -260,6 +269,15 @@ try:
 
                 <div class="stage-wrapper">
                     <div class="stage stage-2" title="{tooltip_2}">
+                        <div class="stage-label">משתתפים שלא פרשו</div>
+                        <div class="update-date">עודכן: {participants_update_date}</div>
+                        <div class="stage-value">{active_participants}</div>
+                    </div>
+                    <div class="pct-badge">{pct_active}% משלב קודם</div>
+                </div>
+
+                <div class="stage-wrapper">
+                    <div class="stage stage-3" title="{tooltip_3}">
                         <div class="stage-label">משתתפים שתרמו דגימה</div>
                         <div class="update-date">עודכן: {samples_update_date}</div>
                         <div class="stage-value">{unique_sample_donors}</div>
@@ -268,7 +286,7 @@ try:
                 </div>
 
                 <div class="stage-wrapper">
-                    <div class="stage stage-3" title="{tooltip_3}">
+                    <div class="stage stage-4" title="{tooltip_4}">
                         <div class="stage-label">דוגמאות שעברו ריצוף</div>
                         <div class="update-date">עודכן: {sequencing_update_date}</div>
                         <div class="stage-value">{saved_stats["total"]}</div>
@@ -277,7 +295,7 @@ try:
                 </div>
 
                 <div class="stage-wrapper">
-                    <div class="stage stage-4" title="{tooltip_4}">
+                    <div class="stage stage-5" title="{tooltip_5}">
                         <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
                         <div class="update-date">עודכן: {sequencing_update_date}</div>
                         <div class="stage-value">{saved_stats["success"]}</div>
@@ -298,6 +316,11 @@ try:
                         <span class="val">{saved_stats["failed"]}</span>
                         <span class="lab">נכשלו / לא עברו סף</span>
                         <div class="update-date">עודכן: {sequencing_update_date}</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">{withdrawn_participants}</span>
+                        <span class="lab">משתתפים שפרשו מהמחקר</span>
+                        <div class="update-date">עודכן: {participants_update_date}</div>
                     </div>
                 </div>
             </div>
