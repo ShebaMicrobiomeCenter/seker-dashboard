@@ -69,14 +69,15 @@ try:
     # ספירת דגימות תקינות לכל UniqueID
     samples_per_unique = merged_recurring.groupby('UniqueID')['SampleID'].count()
 
-    # יצירת מילון מלא עם כל הערכים האפשריים (0, 1, 2, 3, 4 דגימות) כדי שלא יחסרו עמודות
-    recurring_distribution = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+    # יצירת מילון מלא עם כל הערכים האפשריים (1, 2, 3, 4 דגימות - ללא 0) כדי שלא יחסרו עמודות
+    recurring_distribution = {1: 0, 2: 0, 3: 0, 4: 0}
     actual_distribution = samples_per_unique.value_counts()
     for count_val, count_unique in actual_distribution.items():
-        if count_val in recurring_distribution:
-            recurring_distribution[count_val] = count_unique
-        else:
-            recurring_distribution[count_val] = count_unique
+        if count_val > 0:
+            if count_val in recurring_distribution:
+                recurring_distribution[count_val] = count_unique
+            else:
+                recurring_distribution[count_val] = count_unique
 
     # מציאת הערך המקסימלי לצורך קביעת גובה יחסי של העמודות בגרף (עבור CSS height ב-%)
     max_count_val = max(recurring_distribution.values()) if recurring_distribution else 1
@@ -127,9 +128,7 @@ try:
         percentage_of_total = calculate_percentage(count_unique_ids, sum(recurring_distribution.values()))
         bar_height_percent = max(5, round((count_unique_ids / max_count_val) * 100))
 
-        if num_samples == 0:
-            label_text = "ללא דגימות"
-        elif num_samples == 1:
+        if num_samples == 1:
             label_text = "דגימה אחת"
         elif num_samples == 2:
             label_text = "2 דגימות"
