@@ -263,7 +263,7 @@ try:
             }}
             .grid {{
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 20px;
             }}
             .stat-card {{
@@ -439,11 +439,6 @@ try:
             <div class="supplementary">
                 <div class="sup-header">נתונים משלימים</div>
                 <div class="grid">
-                    <div class="stat-card">
-                        <span class="val">{total_samples}</span>
-                        <span class="lab">סך כל הדגימות במקפיא</span>
-                        <div class="update-date">עודכן: {samples_update_date}</div>
-                    </div>
                     <div class="stat-card">
                         <span class="val">{saved_stats["failed"]}</span>
                         <span class="lab">נכשלו / לא עברו סף</span>
