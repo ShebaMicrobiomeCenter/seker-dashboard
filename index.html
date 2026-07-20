@@ -95,16 +95,32 @@
                 left: -12px; /* Beyond the left end of the bar */
                 top: 50%;
                 transform: translateY(-50%);
-                background: var(--text-dark);
+                background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
                 color: white;
-                padding: 3px 10px;
-                border-radius: 12px;
+                padding: 4px 10px;
+                border-radius: 20px;
                 font-size: 0.75rem;
-                font-weight: 600;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-                border: 1.5px solid white;
+                box-shadow: 0 3px 8px rgba(0, 74, 128, 0.25);
+                border: 2px solid white;
                 white-space: nowrap;
                 z-index: 10;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .pct-num {
+                font-weight: 800;
+                font-size: 0.8rem;
+            }
+            .pct-lbl {
+                font-size: 0.65rem;
+                opacity: 0.9;
+                font-weight: 500;
+            }
+            .funnel-row:hover .pct-badge {
+                transform: translateY(-50%) scale(1.06);
+                box-shadow: 0 5px 12px rgba(0, 74, 128, 0.35);
             }
             .row-update {
                 width: 125px;
@@ -268,6 +284,13 @@
                     margin-top: 2px;
                     opacity: 0.6;
                 }
+                .pct-badge .pct-lbl {
+                    display: none;
+                }
+                .pct-badge {
+                    padding: 3px 8px;
+                    left: -6px;
+                }
 
                 /* Mobile responsive histogram */
                 .hist-chart-container { padding: 20px 10px; }
@@ -294,7 +317,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 100%;">
                             <span class="stage-value">1749</span>
-                            <span class="pct-badge">בסיס (100%)</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">100%</span>
+                                <span class="pct-lbl">בסיס</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 16/07/2026 00:00</div>
@@ -306,7 +332,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 93.7%;">
                             <span class="stage-value">1639</span>
-                            <span class="pct-badge">93.7% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">93.7%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 16/07/2026 00:00</div>
@@ -318,7 +347,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 80.2%;">
                             <span class="stage-value">1403</span>
-                            <span class="pct-badge">85.6% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">85.6%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 20/07/2026 11:56</div>
@@ -330,7 +362,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 70.7%;">
                             <span class="stage-value">1236</span>
-                            <span class="pct-badge">88.1% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">88.1%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 20/07/2026 16:37</div>
@@ -342,7 +377,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 69.2%;">
                             <span class="stage-value">1210</span>
-                            <span class="pct-badge">97.9% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">97.9%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 20/07/2026 16:37</div>
@@ -354,7 +392,10 @@
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 65.8%;">
                             <span class="stage-value">1150</span>
-                            <span class="pct-badge">95.0% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">95.0%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 20/07/2026 16:37</div>
@@ -426,7 +467,7 @@
             </div>
             
             <div class="footer">
-                עודכן לאחרונה באופן אוטומטי ב- 20/07/2026 17:03:29 (שעון ישראל)
+                עודכן לאחרונה באופן אוטומטי ב- 20/07/2026 18:38:29 (שעון ישראל)
             </div>
         </div>
     </body>

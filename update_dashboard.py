@@ -277,16 +277,32 @@ try:
                 left: -12px; /* Beyond the left end of the bar */
                 top: 50%;
                 transform: translateY(-50%);
-                background: var(--text-dark);
+                background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
                 color: white;
-                padding: 3px 10px;
-                border-radius: 12px;
+                padding: 4px 10px;
+                border-radius: 20px;
                 font-size: 0.75rem;
-                font-weight: 600;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-                border: 1.5px solid white;
+                box-shadow: 0 3px 8px rgba(0, 74, 128, 0.25);
+                border: 2px solid white;
                 white-space: nowrap;
                 z-index: 10;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }}
+            .pct-num {{
+                font-weight: 800;
+                font-size: 0.8rem;
+            }}
+            .pct-lbl {{
+                font-size: 0.65rem;
+                opacity: 0.9;
+                font-weight: 500;
+            }}
+            .funnel-row:hover .pct-badge {{
+                transform: translateY(-50%) scale(1.06);
+                box-shadow: 0 5px 12px rgba(0, 74, 128, 0.35);
             }}
             .row-update {{
                 width: 125px;
@@ -450,6 +466,13 @@ try:
                     margin-top: 2px;
                     opacity: 0.6;
                 }}
+                .pct-badge .pct-lbl {{
+                    display: none;
+                }}
+                .pct-badge {{
+                    padding: 3px 8px;
+                    left: -6px;
+                }}
 
                 /* Mobile responsive histogram */
                 .hist-chart-container {{ padding: 20px 10px; }}
@@ -476,7 +499,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_1}%;">
                             <span class="stage-value">{total_participants}</span>
-                            <span class="pct-badge">בסיס (100%)</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">100%</span>
+                                <span class="pct-lbl">בסיס</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {participants_update_date}</div>
@@ -488,7 +514,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_2}%;">
                             <span class="stage-value">{active_participants}</span>
-                            <span class="pct-badge">{pct_active}% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">{pct_active}%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {participants_update_date}</div>
@@ -500,7 +529,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_3}%;">
                             <span class="stage-value">{unique_sample_donors}</span>
-                            <span class="pct-badge">{pct_donors}% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">{pct_donors}%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {samples_update_date}</div>
@@ -512,7 +544,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_4}%;">
                             <span class="stage-value">{saved_stats["total"]}</span>
-                            <span class="pct-badge">{pct_pipeline}% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">{pct_pipeline}%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {sequencing_update_date}</div>
@@ -524,7 +559,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_5}%;">
                             <span class="stage-value">{saved_stats["success"]}</span>
-                            <span class="pct-badge">{pct_success}% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">{pct_success}%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {sequencing_update_date}</div>
@@ -536,7 +574,10 @@ try:
                     <div class="bar-container">
                         <div class="bar-fill" style="width: {width_6}%;">
                             <span class="stage-value">{reports_stats["report_count"]}</span>
-                            <span class="pct-badge">{pct_reports}% משלב קודם</span>
+                            <span class="pct-badge">
+                                <span class="pct-num">{pct_reports}%</span>
+                                <span class="pct-lbl">משלב קודם</span>
+                            </span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: {reports_update_date}</div>
