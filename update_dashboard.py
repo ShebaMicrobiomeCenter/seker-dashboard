@@ -10,6 +10,7 @@ PARTICIPANTS_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/
 SAMPLES_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/samples.csv/raw?ref=main"
 RECURRING_URL = f"https://gitlab.com/api/v4/projects/{PROJECT_ID}/repository/files/recurring.csv/raw?ref=main"
 STATS_FILE = "pipeline_stats.json"
+REPORTS_STATS_FILE = "reports-stats.json"
 
 def get_last_commit_date(file_path):
     try:
@@ -103,21 +104,54 @@ try:
 
     sequencing_update_date = saved_stats.get("last_updated", "N/A")
 
+    # ניהול נתוני דוחות שנשלחו בהצלחה (reports-stats.json)
+    if os.path.exists(REPORTS_STATS_FILE):
+        with open(REPORTS_STATS_FILE, "r") as f:
+            reports_stats = json.load(f)
+    else:
+        reports_stats = {"report_count": "1150", "last_updated": "N/A"}
+
+    report_count_env = os.getenv('REPORT_COUNT')
+    if report_count_env and report_count_env.strip() != "":
+        reports_stats["report_count"] = report_count_env
+        reports_stats["last_updated"] = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
+        with open(REPORTS_STATS_FILE, "w") as f:
+            json.dump(reports_stats, f)
+
+    if "last_updated" not in reports_stats or reports_stats["last_updated"] == "N/A":
+        if os.path.exists(REPORTS_STATS_FILE):
+            mtime = os.path.getmtime(REPORTS_STATS_FILE)
+            reports_stats["last_updated"] = datetime.fromtimestamp(mtime, ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
+        else:
+            reports_stats["last_updated"] = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
+
+    reports_update_date = reports_stats.get("last_updated", "N/A")
+
     # חישוב אחוזים ופערים
     pct_active = calculate_percentage(active_participants, total_participants)
     pct_donors = calculate_percentage(unique_sample_donors, active_participants)
     pct_pipeline = calculate_percentage(saved_stats["total"], unique_sample_donors)
     pct_success = calculate_percentage(saved_stats["success"], saved_stats["total"])
+    pct_reports = calculate_percentage(reports_stats["report_count"], saved_stats["success"])
 
     # חישוב פערים לטולטיפים
     gap_3_2 = max(0, active_participants - unique_sample_donors)
     gap_4_3 = max(0, unique_sample_donors - int(saved_stats["total"]))
     gap_5_4 = max(0, int(saved_stats["total"]) - int(saved_stats["success"]))
+    gap_6_5 = max(0, int(saved_stats["success"]) - int(reports_stats["report_count"]))
 
     tooltip_2 = f"{withdrawn_participants} משתתפים שפרשו"
     tooltip_3 = f"{gap_3_2} משתתפים שדגימה שלהם לא נקלטה במערכת"
     tooltip_4 = f"חסרות {gap_4_3} דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה"
     tooltip_5 = f"חסרות {gap_5_4} דגימות: רובן לא הגיעו לסף הקריאות הנדרש"
+    tooltip_6 = f"{gap_6_5} דוחות חסרים בתהליכי הפקה"
+
+    width_1 = 100
+    width_2 = min(100, calculate_percentage(active_participants, total_participants))
+    width_3 = min(100, calculate_percentage(unique_sample_donors, total_participants))
+    width_4 = min(100, calculate_percentage(saved_stats["total"], total_participants))
+    width_5 = min(100, calculate_percentage(saved_stats["success"], total_participants))
+    width_6 = min(100, calculate_percentage(reports_stats["report_count"], total_participants))
 
     current_time = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M:%S")
 
@@ -183,61 +217,92 @@ try:
             h1 {{ font-size: 2.2rem; margin: 0 0 10px 0; font-weight: 800; letter-spacing: -0.5px; }}
             h2 {{ font-size: 1.2rem; color: var(--text-gray); margin: 0; font-weight: 400; }}
 
-            /* Funnel Visual Redesign */
+            /* Funnel Visual Redesign to Horizontal Bars */
             .funnel {{
                 display: flex;
                 flex-direction: column;
-                align-items: center;
+                gap: 20px;
                 margin: 40px 0;
             }}
-            .stage-wrapper {{
+            .funnel-row {{
+                display: flex;
+                align-items: center;
+                width: 100%;
+                gap: 15px;
                 position: relative;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 15px;
+                padding: 4px 0;
+                cursor: help;
             }}
-            .stage {{
-                width: 100%;
-                height: 120px;
+            .row-label {{
+                width: 180px;
+                min-width: 180px;
+                text-align: right;
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--text-dark);
+            }}
+            .bar-container {{
+                flex-grow: 1;
+                position: relative;
+                height: 38px;
+                background-color: #eef2f6;
+                border-radius: 19px;
+                overflow: visible;
                 display: flex;
-                flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            }}
+            .bar-fill {{
+                height: 100%;
+                background: linear-gradient(to left, var(--gradient-start), var(--gradient-end));
+                border-radius: 19px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start; /* flex-start in RTL is right side */
+                padding: 0 15px;
+                box-sizing: border-box;
+                transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 4px rgba(0, 74, 128, 0.2);
+                position: relative;
+                min-width: 80px;
+            }}
+            .stage-value {{
                 color: white;
-                background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                font-weight: 800;
+                font-size: 1.15rem;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             }}
-
-            /* Funnel shapes using clip-path */
-            .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 93% 100%, 7% 100%); }}
-            .stage-2 {{ clip-path: polygon(7% 0%, 93% 0%, 86% 100%, 14% 100%); }}
-            .stage-3 {{ clip-path: polygon(14% 0%, 86% 0%, 79% 100%, 21% 100%); }}
-            .stage-4 {{ clip-path: polygon(21% 0%, 79% 0%, 72% 100%, 28% 100%); }}
-            .stage-5 {{ clip-path: polygon(28% 0%, 72% 0%, 65% 100%, 35% 100%); }}
-
-            .stage-label {{ font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }}
-            .stage-value {{ font-size: 2.2rem; font-weight: 800; line-height: 1; }}
-            .update-date {{ font-size: 0.75rem; opacity: 0.7; margin-top: 4px; font-weight: 400; }}
-
-            .en-text {{ direction: ltr; display: inline-block; }}
-
             .pct-badge {{
                 position: absolute;
-                bottom: -14px;
-                left: 50%;
-                transform: translateX(-50%);
+                left: -12px; /* Beyond the left end of the bar */
+                top: 50%;
+                transform: translateY(-50%);
                 background: var(--text-dark);
                 color: white;
-                padding: 2px 10px;
-                border-radius: 20px;
-                font-size: 0.8rem;
+                padding: 3px 10px;
+                border-radius: 12px;
+                font-size: 0.75rem;
                 font-weight: 600;
-                z-index: 20;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                border: 2px solid white;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+                border: 1.5px solid white;
+                white-space: nowrap;
+                z-index: 10;
             }}
+            .row-update {{
+                width: 125px;
+                min-width: 125px;
+                text-align: left;
+                font-size: 0.75rem;
+                color: var(--text-gray);
+                opacity: 0.45;
+                font-weight: 400;
+                white-space: nowrap;
+                transition: opacity 0.2s;
+            }}
+            .funnel-row:hover .row-update {{
+                opacity: 0.85;
+            }}
+            .en-text {{ direction: ltr; display: inline-block; }}
 
             /* Stats Grid */
             .supplementary {{
@@ -357,19 +422,34 @@ try:
 
             /* Mobile */
             @media (max-width: 600px) {{
-                .container {{ padding: 25px; }}
+                .container {{ padding: 25px 15px; }}
                 h1 {{ font-size: 1.8rem; }}
-                .stage {{ height: 110px; }}
-                .stage-value {{ font-size: 1.8rem; }}
-                .stage-label {{ font-size: 0.85rem; padding: 0 5%; }}
                 .grid {{ grid-template-columns: 1fr; }}
 
-                /* Adjust shapes for mobile to avoid text cutting */
-                .stage-1 {{ clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%); }}
-                .stage-2 {{ clip-path: polygon(3% 0%, 97% 0%, 94% 100%, 6% 100%); }}
-                .stage-3 {{ clip-path: polygon(6% 0%, 94% 0%, 91% 100%, 9% 100%); }}
-                .stage-4 {{ clip-path: polygon(9% 0%, 91% 0%, 88% 100%, 12% 100%); }}
-                .stage-5 {{ clip-path: polygon(12% 0%, 88% 0%, 85% 100%, 15% 100%); }}
+                /* Horizontal bar stack on mobile */
+                .funnel-row {{
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 6px;
+                    padding-bottom: 12px;
+                    border-bottom: 1px solid #eef2f6;
+                }}
+                .row-label {{
+                    width: 100%;
+                    min-width: unset;
+                    text-align: right;
+                    font-size: 0.95rem;
+                }}
+                .bar-container {{
+                    margin-left: 20px; /* leave room for badge */
+                }}
+                .row-update {{
+                    width: 100%;
+                    min-width: unset;
+                    text-align: right;
+                    margin-top: 2px;
+                    opacity: 0.6;
+                }}
 
                 /* Mobile responsive histogram */
                 .hist-chart-container {{ padding: 20px 10px; }}
@@ -390,49 +470,76 @@ try:
             </header>
             
             <div class="funnel">
-                <div class="stage-wrapper">
-                    <div class="stage stage-1">
-                        <div class="stage-label">משתתפים רשומים בסקר</div>
-                        <div class="update-date">עודכן: {participants_update_date}</div>
-                        <div class="stage-value">{total_participants}</div>
+                <!-- Stage 1 -->
+                <div class="funnel-row">
+                    <div class="row-label">משתתפים רשומים בסקר</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_1}%;">
+                            <span class="stage-value">{total_participants}</span>
+                            <span class="pct-badge">בסיס (100%)</span>
+                        </div>
                     </div>
-                    <div class="pct-badge">בסיס (100%)</div>
+                    <div class="row-update">עודכן: {participants_update_date}</div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-2" title="{tooltip_2}">
-                        <div class="stage-label">משתתפים שלא פרשו</div>
-                        <div class="update-date">עודכן: {participants_update_date}</div>
-                        <div class="stage-value">{active_participants}</div>
+                <!-- Stage 2 -->
+                <div class="funnel-row" title="{tooltip_2}">
+                    <div class="row-label">משתתפים שלא פרשו</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_2}%;">
+                            <span class="stage-value">{active_participants}</span>
+                            <span class="pct-badge">{pct_active}% משלב קודם</span>
+                        </div>
                     </div>
-                    <div class="pct-badge">{pct_active}% משלב קודם</div>
+                    <div class="row-update">עודכן: {participants_update_date}</div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-3" title="{tooltip_3}">
-                        <div class="stage-label">משתתפים שתרמו דגימה</div>
-                        <div class="update-date">עודכן: {samples_update_date}</div>
-                        <div class="stage-value">{unique_sample_donors}</div>
+                <!-- Stage 3 -->
+                <div class="funnel-row" title="{tooltip_3}">
+                    <div class="row-label">משתתפים שתרמו דגימה</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_3}%;">
+                            <span class="stage-value">{unique_sample_donors}</span>
+                            <span class="pct-badge">{pct_donors}% משלב קודם</span>
+                        </div>
                     </div>
-                    <div class="pct-badge">{pct_donors}% משלב קודם</div>
+                    <div class="row-update">עודכן: {samples_update_date}</div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-4" title="{tooltip_4}">
-                        <div class="stage-label">דוגמאות שעברו ריצוף</div>
-                        <div class="update-date">עודכן: {sequencing_update_date}</div>
-                        <div class="stage-value">{saved_stats["total"]}</div>
+                <!-- Stage 4 -->
+                <div class="funnel-row" title="{tooltip_4}">
+                    <div class="row-label">דוגמאות שעברו ריצוף</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_4}%;">
+                            <span class="stage-value">{saved_stats["total"]}</span>
+                            <span class="pct-badge">{pct_pipeline}% משלב קודם</span>
+                        </div>
                     </div>
-                    <div class="pct-badge">{pct_pipeline}% משלב קודם</div>
+                    <div class="row-update">עודכן: {sequencing_update_date}</div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-5" title="{tooltip_5}">
-                        <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
-                        <div class="update-date">עודכן: {sequencing_update_date}</div>
-                        <div class="stage-value">{saved_stats["success"]}</div>
+                <!-- Stage 5 -->
+                <div class="funnel-row" title="{tooltip_5}">
+                    <div class="row-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_5}%;">
+                            <span class="stage-value">{saved_stats["success"]}</span>
+                            <span class="pct-badge">{pct_success}% משלב קודם</span>
+                        </div>
                     </div>
-                    <div class="pct-badge">{pct_success}% משלב קודם</div>
+                    <div class="row-update">עודכן: {sequencing_update_date}</div>
+                </div>
+
+                <!-- Stage 6 -->
+                <div class="funnel-row" title="{tooltip_6}">
+                    <div class="row-label">דוחות שנשלחו בהצלחה</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: {width_6}%;">
+                            <span class="stage-value">{reports_stats["report_count"]}</span>
+                            <span class="pct-badge">{pct_reports}% משלב קודם</span>
+                        </div>
+                    </div>
+                    <div class="row-update">עודכן: {reports_update_date}</div>
                 </div>
             </div>
 
