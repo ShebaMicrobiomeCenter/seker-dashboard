@@ -35,61 +35,90 @@
             h1 { font-size: 2.2rem; margin: 0 0 10px 0; font-weight: 800; letter-spacing: -0.5px; }
             h2 { font-size: 1.2rem; color: var(--text-gray); margin: 0; font-weight: 400; }
 
-            /* Funnel Visual Redesign */
+            /* Funnel Visual Redesign to Horizontal Bars */
             .funnel {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
+                gap: 16px;
                 margin: 40px 0;
             }
-            .stage-wrapper {
+            .stage-card {
+                display: flex;
+                align-items: center;
+                background: white;
+                border: 1px solid #eef2f6;
+                border-radius: 16px;
+                padding: 16px 24px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+                transition: transform 0.2s, box-shadow 0.2s;
                 position: relative;
-                width: 100%;
+                cursor: pointer;
+            }
+            .stage-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            }
+            .stage-info {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                margin-bottom: 15px;
+                width: 240px;
+                min-width: 240px;
             }
-            .stage {
-                width: 100%;
-                height: 120px;
+            .stage-label {
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 4px;
+            }
+            .stage-value {
+                font-size: 1.8rem;
+                font-weight: 800;
+                color: var(--sheba-blue);
+                line-height: 1;
+            }
+            .stage-bar-container {
+                flex: 1;
+                height: 20px;
+                background-color: var(--sheba-light);
+                border-radius: 10px;
+                position: relative;
+                overflow: hidden;
+                margin: 0 24px;
+            }
+            .stage-bar {
+                height: 100%;
+                background: linear-gradient(to left, var(--gradient-start), var(--gradient-end));
+                border-radius: 10px;
+                transition: width 0.8s ease-in-out;
+            }
+            .stage-meta {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                align-items: flex-end;
+                width: 180px;
+                min-width: 180px;
+                text-align: left;
             }
-
-            /* Funnel shapes using clip-path */
-            .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 93% 100%, 7% 100%); }
-            .stage-2 { clip-path: polygon(7% 0%, 93% 0%, 86% 100%, 14% 100%); }
-            .stage-3 { clip-path: polygon(14% 0%, 86% 0%, 79% 100%, 21% 100%); }
-            .stage-4 { clip-path: polygon(21% 0%, 79% 0%, 72% 100%, 28% 100%); }
-            .stage-5 { clip-path: polygon(28% 0%, 72% 0%, 65% 100%, 35% 100%); }
-
-            .stage-label { font-size: 1.1rem; opacity: 0.9; margin-bottom: 4px; font-weight: 400; text-align: center; padding: 0 15%; }
-            .stage-value { font-size: 2.2rem; font-weight: 800; line-height: 1; }
-            .update-date { font-size: 0.75rem; opacity: 0.7; margin-top: 4px; font-weight: 400; }
-
-            .en-text { direction: ltr; display: inline-block; }
-
             .pct-badge {
-                position: absolute;
-                bottom: -14px;
-                left: 50%;
-                transform: translateX(-50%);
                 background: var(--text-dark);
                 color: white;
-                padding: 2px 10px;
+                padding: 4px 12px;
                 border-radius: 20px;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 font-weight: 600;
-                z-index: 20;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                border: 2px solid white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 6px;
+                display: inline-block;
+                white-space: nowrap;
             }
+            .update-date {
+                font-size: 0.75rem;
+                color: var(--text-gray);
+                opacity: 0.7;
+                white-space: nowrap;
+            }
+
+            .en-text { direction: ltr; display: inline-block; }
 
             /* Stats Grid */
             .supplementary {
@@ -209,19 +238,39 @@
 
             /* Mobile */
             @media (max-width: 600px) {
-                .container { padding: 25px; }
+                .container { padding: 20px 15px; }
                 h1 { font-size: 1.8rem; }
-                .stage { height: 110px; }
-                .stage-value { font-size: 1.8rem; }
-                .stage-label { font-size: 0.85rem; padding: 0 5%; }
+                .funnel { gap: 12px; }
+                .stage-card {
+                    flex-direction: column;
+                    align-items: stretch;
+                    padding: 16px;
+                }
+                .stage-info {
+                    width: 100%;
+                    min-width: unset;
+                    margin-bottom: 8px;
+                    text-align: right;
+                }
+                .stage-value {
+                    font-size: 1.6rem;
+                }
+                .stage-bar-container {
+                    margin: 8px 0;
+                    height: 16px;
+                }
+                .stage-meta {
+                    width: 100%;
+                    min-width: unset;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 8px;
+                }
+                .pct-badge {
+                    margin-bottom: 0;
+                }
                 .grid { grid-template-columns: 1fr; }
-
-                /* Adjust shapes for mobile to avoid text cutting */
-                .stage-1 { clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%); }
-                .stage-2 { clip-path: polygon(3% 0%, 97% 0%, 94% 100%, 6% 100%); }
-                .stage-3 { clip-path: polygon(6% 0%, 94% 0%, 91% 100%, 9% 100%); }
-                .stage-4 { clip-path: polygon(9% 0%, 91% 0%, 88% 100%, 12% 100%); }
-                .stage-5 { clip-path: polygon(12% 0%, 88% 0%, 85% 100%, 15% 100%); }
 
                 /* Mobile responsive histogram */
                 .hist-chart-container { padding: 20px 10px; }
@@ -242,49 +291,94 @@
             </header>
             
             <div class="funnel">
-                <div class="stage-wrapper">
-                    <div class="stage stage-1">
+                <!-- שלב 1 -->
+                <div class="stage-card">
+                    <div class="stage-info">
                         <div class="stage-label">משתתפים רשומים בסקר</div>
-                        <div class="update-date">עודכן: 16/07/2026 00:00</div>
                         <div class="stage-value">1749</div>
                     </div>
-                    <div class="pct-badge">בסיס (100%)</div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">בסיס (100%)</div>
+                        <div class="update-date">עודכן: 16/07/2026 00:00</div>
+                    </div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-2" title="110 משתתפים שפרשו">
+                <!-- שלב 2 -->
+                <div class="stage-card" title="110 משתתפים שפרשו">
+                    <div class="stage-info">
                         <div class="stage-label">משתתפים שלא פרשו</div>
-                        <div class="update-date">עודכן: 16/07/2026 00:00</div>
                         <div class="stage-value">1639</div>
                     </div>
-                    <div class="pct-badge">93.7% משלב קודם</div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 93.7%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">93.7% משלב קודם</div>
+                        <div class="update-date">עודכן: 16/07/2026 00:00</div>
+                    </div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-3" title="236 משתתפים שדגימה שלהם לא נקלטה במערכת">
+                <!-- שלב 3 -->
+                <div class="stage-card" title="236 משתתפים שדגימה שלהם לא נקלטה במערכת">
+                    <div class="stage-info">
                         <div class="stage-label">משתתפים שתרמו דגימה</div>
-                        <div class="update-date">עודכן: 20/07/2026 11:56</div>
                         <div class="stage-value">1403</div>
                     </div>
-                    <div class="pct-badge">85.6% משלב קודם</div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 80.2%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">85.6% משלב קודם</div>
+                        <div class="update-date">עודכן: 20/07/2026 11:56</div>
+                    </div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-4" title="חסרות 167 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
+                <!-- שלב 4 -->
+                <div class="stage-card" title="חסרות 167 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
+                    <div class="stage-info">
                         <div class="stage-label">דוגמאות שעברו ריצוף</div>
-                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
                         <div class="stage-value">1236</div>
                     </div>
-                    <div class="pct-badge">88.1% משלב קודם</div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 70.7%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">88.1% משלב קודם</div>
+                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
+                    </div>
                 </div>
 
-                <div class="stage-wrapper">
-                    <div class="stage stage-5" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
-                        <div class="stage-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
-                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
+                <!-- שלב 5 -->
+                <div class="stage-card" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
+                    <div class="stage-info">
+                        <div class="stage-label">הסתיימו בהצלחה <span class="en-text" style="direction: ltr; display: inline-block;">(>4K reads)</span></div>
                         <div class="stage-value">1210</div>
                     </div>
-                    <div class="pct-badge">97.9% משלב קודם</div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 69.2%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">97.9% משלב קודם</div>
+                        <div class="update-date">עודכן: 08/07/2026 22:56</div>
+                    </div>
+                </div>
+
+                <!-- שלב 6 -->
+                <div class="stage-card" title="163 דוחות לא נשלחו, בתהליך הפקה">
+                    <div class="stage-info">
+                        <div class="stage-label">דוחות שנשלחו בפועל</div>
+                        <div class="stage-value">1240</div>
+                    </div>
+                    <div class="stage-bar-container">
+                        <div class="stage-bar" style="width: 70.9%;"></div>
+                    </div>
+                    <div class="stage-meta">
+                        <div class="pct-badge">102.5% משלב קודם</div>
+                        <div class="update-date">עודכן: 20/07/2026 12:23</div>
+                    </div>
                 </div>
             </div>
 
@@ -353,7 +447,7 @@
             </div>
             
             <div class="footer">
-                עודכן לאחרונה באופן אוטומטי ב- 20/07/2026 11:56:59 (שעון ישראל)
+                עודכן לאחרונה באופן אוטומטי ב- 20/07/2026 13:08:21 (שעון ישראל)
             </div>
         </div>
     </body>
