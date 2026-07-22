@@ -33,6 +33,11 @@ jobs:
         MEGAMAP_TOTAL: ${{ github.event.client_payload.total_run }}
         MEGAMAP_SUCCESS: ${{ github.event.client_payload.success_count }}
         MEGAMAP_FAILED: ${{ github.event.client_payload.failed_count }}
+        COLLECTED_LAST_WEEK: ${{ github.event.client_payload.collected_last_week }}
+        COLLECTED_LAST_2_WEEKS: ${{ github.event.client_payload.collected_last_2_weeks }}
+        COLLECTED_LAST_MONTH: ${{ github.event.client_payload.collected_last_month }}
+        COLLECTED_LAST_2_MONTHS: ${{ github.event.client_payload.collected_last_2_months }}
+        COLLECTED_LAST_YEAR: ${{ github.event.client_payload.collected_last_year }}
       run: python update_dashboard.py
 
     - name: Commit and Push changes
