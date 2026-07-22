@@ -136,9 +136,21 @@
             }
             .en-text { direction: ltr; display: inline-block; }
 
+            /* Recent Collections Section */
+            .recent-collections {
+                margin-top: 80px;
+                border-top: 2px solid #f0f4f8;
+                padding-top: 40px;
+            }
+            .collections-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 15px;
+            }
+
             /* Stats Grid */
             .supplementary {
-                margin-top: 80px;
+                margin-top: 60px;
                 border-top: 2px solid #f0f4f8;
                 padding-top: 40px;
             }
@@ -256,6 +268,7 @@
             @media (max-width: 600px) {
                 .container { padding: 25px 15px; }
                 h1 { font-size: 1.8rem; }
+                .collections-grid { grid-template-columns: 1fr; }
                 .grid { grid-template-columns: 1fr; }
 
                 /* Horizontal bar stack on mobile */
@@ -310,11 +323,11 @@
                     <div class="row-label">משתתפים רשומים בסקר</div>
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 100%;">
-                            <span class="stage-value">1749</span>
+                            <span class="stage-value">1753</span>
                             <span class="pct-badge"><span class="pct-num">100%</span> <span class="pct-lbl">בסיס</span></span>
                         </div>
                     </div>
-                    <div class="row-update">עודכן: 16/07/2026 00:00</div>
+                    <div class="row-update">עודכן: 22/07/2026 14:42</div>
                 </div>
 
                 <!-- Stage 2 -->
@@ -322,20 +335,20 @@
                     <div class="row-label">משתתפים שלא פרשו</div>
                     <div class="bar-container">
                         <div class="bar-fill" style="width: 93.7%;">
-                            <span class="stage-value">1639</span>
+                            <span class="stage-value">1643</span>
                             <span class="pct-badge"><span class="pct-num">93.7%</span> <span class="pct-lbl">משלב קודם</span></span>
                         </div>
                     </div>
-                    <div class="row-update">עודכן: 16/07/2026 00:00</div>
+                    <div class="row-update">עודכן: 22/07/2026 14:42</div>
                 </div>
 
                 <!-- Stage 3 -->
-                <div class="funnel-row" title="226 משתתפים שדגימה שלהם לא נקלטה במערכת">
+                <div class="funnel-row" title="230 משתתפים שדגימה שלהם לא נקלטה במערכת">
                     <div class="row-label">משתתפים שתרמו דגימה</div>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: 80.8%;">
+                        <div class="bar-fill" style="width: 80.6%;">
                             <span class="stage-value">1413</span>
-                            <span class="pct-badge"><span class="pct-num">86.2%</span> <span class="pct-lbl">משלב קודם</span></span>
+                            <span class="pct-badge"><span class="pct-num">86.0%</span> <span class="pct-lbl">משלב קודם</span></span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 22/07/2026 12:04</div>
@@ -345,7 +358,7 @@
                 <div class="funnel-row" title="חסרות 174 דגימות: רובן בתהליך עבודה או מחכות ל-PCR במנה הבאה">
                     <div class="row-label">דוגמאות שעברו ריצוף</div>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: 70.8%;">
+                        <div class="bar-fill" style="width: 70.7%;">
                             <span class="stage-value">1239</span>
                             <span class="pct-badge"><span class="pct-num">87.7%</span> <span class="pct-lbl">משלב קודם</span></span>
                         </div>
@@ -357,7 +370,7 @@
                 <div class="funnel-row" title="חסרות 26 דגימות: רובן לא הגיעו לסף הקריאות הנדרש">
                     <div class="row-label">הסתיימו בהצלחה <span class="en-text">(>4K reads)</span></div>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: 69.4%;">
+                        <div class="bar-fill" style="width: 69.2%;">
                             <span class="stage-value">1213</span>
                             <span class="pct-badge"><span class="pct-num">97.9%</span> <span class="pct-lbl">משלב קודם</span></span>
                         </div>
@@ -369,12 +382,38 @@
                 <div class="funnel-row" title="63 דוחות חסרים בתהליכי הפקה">
                     <div class="row-label">דוחות שנשלחו בהצלחה</div>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: 65.8%;">
+                        <div class="bar-fill" style="width: 65.6%;">
                             <span class="stage-value">1150</span>
                             <span class="pct-badge"><span class="pct-num">94.8%</span> <span class="pct-lbl">משלב קודם</span></span>
                         </div>
                     </div>
                     <div class="row-update">עודכן: 20/07/2026 16:37</div>
+                </div>
+            </div>
+
+            <div class="recent-collections">
+                <div class="sup-header">דגימות שנאספו לאחרונה</div>
+                <div class="collections-grid">
+                    <div class="stat-card">
+                        <span class="val">14</span>
+                        <span class="lab">בשבוע האחרון</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">30</span>
+                        <span class="lab">בשבועיים האחרונים</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">1413</span>
+                        <span class="lab">בחודש האחרון</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">1413</span>
+                        <span class="lab">בחודשיים האחרונים</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">1413</span>
+                        <span class="lab">בשנה האחרונה</span>
+                    </div>
                 </div>
             </div>
 
@@ -389,7 +428,7 @@
                     <div class="stat-card">
                         <span class="val">110</span>
                         <span class="lab">משתתפים שפרשו מהמחקר</span>
-                        <div class="update-date">עודכן: 16/07/2026 00:00</div>
+                        <div class="update-date">עודכן: 22/07/2026 14:42</div>
                     </div>
                 </div>
             </div>
@@ -401,20 +440,20 @@
                         
         <div class="hist-col">
             <div class="hist-bar-wrapper">
-                <div class="hist-bar-value">1192</div>
-                <div class="hist-bar" style="height: 100%;" title="1192 משתתפים ייחודיים (92.1%)"></div>
+                <div class="hist-bar-value">1191</div>
+                <div class="hist-bar" style="height: 100%;" title="1191 משתתפים ייחודיים (92.0%)"></div>
             </div>
             <div class="hist-label">דגימה אחת</div>
-            <div class="hist-pct">92.1%</div>
+            <div class="hist-pct">92.0%</div>
         </div>
         
         <div class="hist-col">
             <div class="hist-bar-wrapper">
-                <div class="hist-bar-value">87</div>
-                <div class="hist-bar" style="height: 7%;" title="87 משתתפים ייחודיים (6.7%)"></div>
+                <div class="hist-bar-value">88</div>
+                <div class="hist-bar" style="height: 7%;" title="88 משתתפים ייחודיים (6.8%)"></div>
             </div>
             <div class="hist-label">2 דגימות</div>
-            <div class="hist-pct">6.7%</div>
+            <div class="hist-pct">6.8%</div>
         </div>
         
         <div class="hist-col">
@@ -437,13 +476,13 @@
         
                     </div>
                     <div class="update-date" style="text-align: center; margin-top: 10px; color: var(--text-gray); opacity: 0.6;">
-                        עודכן: 16/07/2026 00:00
+                        עודכן: 22/07/2026 14:42
                     </div>
                 </div>
             </div>
             
             <div class="footer">
-                עודכן לאחרונה באופן אוטומטי ב- 22/07/2026 14:39:33 (שעון ישראל)
+                עודכן לאחרונה באופן אוטומטי ב- 22/07/2026 15:02:08 (שעון ישראל)
             </div>
         </div>
     </body>

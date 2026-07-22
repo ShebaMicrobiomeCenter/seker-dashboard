@@ -88,7 +88,22 @@ try:
         with open(STATS_FILE, "r") as f:
             saved_stats = json.load(f)
     else:
-        saved_stats = {"total": "0", "success": "0", "failed": "0", "last_updated": "N/A"}
+        saved_stats = {
+            "total": "0",
+            "success": "0",
+            "failed": "0",
+            "last_updated": "N/A",
+            "collected_last_week": "0",
+            "collected_last_2_weeks": "0",
+            "collected_last_month": "0",
+            "collected_last_2_months": "0",
+            "collected_last_year": "0"
+        }
+
+    # Ensure all collected fields exist in saved_stats
+    for key in ["collected_last_week", "collected_last_2_weeks", "collected_last_month", "collected_last_2_months", "collected_last_year"]:
+        if key not in saved_stats:
+            saved_stats[key] = "0"
 
     megamap_total = os.getenv('MEGAMAP_TOTAL')
     megamap_success = os.getenv('MEGAMAP_SUCCESS')
@@ -99,20 +114,30 @@ try:
     collected_last_2_months = os.getenv('COLLECTED_LAST_2_MONTHS')
     collected_last_year = os.getenv('COLLECTED_LAST_YEAR')
 
+    stats_changed = False
+
     if megamap_total and megamap_total.strip() != "":
         saved_stats["total"] = megamap_total
         saved_stats["success"] = megamap_success
         saved_stats["failed"] = megamap_failed
+        stats_changed = True
     if collected_last_week is not None and collected_last_week.strip() != "":
         saved_stats["collected_last_week"] = collected_last_week
+        stats_changed = True
     if collected_last_2_weeks is not None and collected_last_2_weeks.strip() != "":
         saved_stats["collected_last_2_weeks"] = collected_last_2_weeks
+        stats_changed = True
     if collected_last_month is not None and collected_last_month.strip() != "":
         saved_stats["collected_last_month"] = collected_last_month
+        stats_changed = True
     if collected_last_2_months is not None and collected_last_2_months.strip() != "":
         saved_stats["collected_last_2_months"] = collected_last_2_months
+        stats_changed = True
     if collected_last_year is not None and collected_last_year.strip() != "":
         saved_stats["collected_last_year"] = collected_last_year
+        stats_changed = True
+
+    if stats_changed:
         saved_stats["last_updated"] = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
         with open(STATS_FILE, "w") as f:
             json.dump(saved_stats, f)
@@ -333,9 +358,21 @@ try:
             }}
             .en-text {{ direction: ltr; display: inline-block; }}
 
+            /* Recent Collections Section */
+            .recent-collections {{
+                margin-top: 80px;
+                border-top: 2px solid #f0f4f8;
+                padding-top: 40px;
+            }}
+            .collections-grid {{
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 15px;
+            }}
+
             /* Stats Grid */
             .supplementary {{
-                margin-top: 80px;
+                margin-top: 60px;
                 border-top: 2px solid #f0f4f8;
                 padding-top: 40px;
             }}
@@ -453,6 +490,7 @@ try:
             @media (max-width: 600px) {{
                 .container {{ padding: 25px 15px; }}
                 h1 {{ font-size: 1.8rem; }}
+                .collections-grid {{ grid-template-columns: 1fr; }}
                 .grid {{ grid-template-columns: 1fr; }}
 
                 /* Horizontal bar stack on mobile */
@@ -572,6 +610,32 @@ try:
                         </div>
                     </div>
                     <div class="row-update">עודכן: {reports_update_date}</div>
+                </div>
+            </div>
+
+            <div class="recent-collections">
+                <div class="sup-header">דגימות שנאספו לאחרונה</div>
+                <div class="collections-grid">
+                    <div class="stat-card">
+                        <span class="val">{saved_stats.get("collected_last_week", "0")}</span>
+                        <span class="lab">בשבוע האחרון</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">{saved_stats.get("collected_last_2_weeks", "0")}</span>
+                        <span class="lab">בשבועיים האחרונים</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">{saved_stats.get("collected_last_month", "0")}</span>
+                        <span class="lab">בחודש האחרון</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">{saved_stats.get("collected_last_2_months", "0")}</span>
+                        <span class="lab">בחודשיים האחרונים</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="val">{saved_stats.get("collected_last_year", "0")}</span>
+                        <span class="lab">בשנה האחרונה</span>
+                    </div>
                 </div>
             </div>
 
